@@ -1,6 +1,8 @@
 {
   "name": "followthebird",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular",
   "id": "cdd6d5ee"
 }
