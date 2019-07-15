@@ -1,6 +1,5 @@
 <ion-content scroll="false" class="login_page">
-	<div padding class="formContainer">
-		<form #form="ngForm" (ngSubmit)="doLogin(form)" method="post" >	
+  <div padding class="formContainer">
 			<ion-list>
 				<ion-item>
 					<ion-label fixed><ion-icon ios="ios-contact-outline" md="md-contact"></ion-icon></ion-label>
@@ -11,9 +10,10 @@
 					<ion-label fixed><ion-icon ios="ios-unlock-outline" md="md-unlock"></ion-icon></ion-label>
 					<ion-input type="password" [(ngModel)]="account.user_password" name="user_password" placeholder="Password"></ion-input>
 				</ion-item>
-				<ion-button class="login_btn" type="submit" expand="block" fill="outline">Login</ion-button>
+			
+				<ion-button class="login_btn" ion-button color="light" block outline (click)="doLogin()">Login</ion-button>
 			</ion-list>
-		</form>
+		
 		<ion-grid>			
 			<ion-row>
 				<ion-col col-6>
@@ -25,5 +25,6 @@
 			
 			</ion-row>
 		</ion-grid>
-	</div>
+	</div>	
+	
 </ion-content>
