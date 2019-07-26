@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar color="primary" >
+    <ion-back-button slot="start"></ion-back-button>
+    <ion-title>Vaults</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="createVault()">
+        <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-grid class="editGrid" margin-top>
+      <ion-row>
+        <ion-col size="4" *ngFor="let vault of vaults" class="ion-margin-bottom">
+        <ion-button fill="clear" block expand="full" (click)="viewVault(vault)"> 
+          <ion-icon slot="icon-only" style="color:#ef4444;" name="images" class="ion-margin-bottom" *ngIf="vault.type == 'image'"></ion-icon>
+          <ion-icon slot="icon-only" style="color:#5f9af5;" name="videocam" class="ion-margin-bottom" *ngIf="vault.type == 'mp4'"></ion-icon>
+          <ion-icon slot="icon-only"style="color:#ccc130;" name="volume-up" class="ion-margin-bottom" *ngIf="vault.type == 'mp3'"></ion-icon>
+          <ion-icon slot="icon-only" name="attach" class="ion-margin-bottom" *ngIf="vault.type == 'files'"></ion-icon>
+          <ion-label>{{vault.title}}</ion-label> 
+        </ion-button>
+        </ion-col>	  
+      </ion-row>
+    </ion-grid>
+</ion-content>

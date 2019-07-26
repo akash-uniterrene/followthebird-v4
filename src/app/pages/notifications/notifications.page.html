@@ -1,3 +1,22 @@
 <ion-content>
-
+    <ion-list no-lines class="ion-no-padding ion-text-center">
+        <ion-item-divider color="light">
+            <ion-label>
+                Notifications
+            </ion-label>
+        </ion-item-divider>
+        <ion-item *ngFor="let notification of notifications" class="seen" [ngClass]="{'seen': notification.seen == '1', 'unseen': notification.seen != '1'}">
+            <ion-avatar slot="start" class="user_photo" item-start text-wrap (click)="viewProfile(notification.user_name,notification.user_id)">
+                <img [src]="imageURL+notification.user_picture" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'">
+            </ion-avatar>   
+            <ion-label>
+                <p style="font-size: 16px;" text-wrap (click)="viewProfile(notification.user_name,notification.user_id)"> <ion-icon [name]="notification.icon"></ion-icon> <strong style="font-size: 15px;"> {{notification.user_firstname}} {{notification.user_lastname}} </strong> <span>{{notification.message}}</span></p>     
+                <ion-note class="msg_time" *ngIf="isToday(notification.time)">{{ notification.time | date: 'h:mm a' }}</ion-note>
+                <ion-note class="msg_time" *ngIf="!isToday(notification.time)" color="primary">{{ notification.time | date: 'dd MMM' }} at {{ notification.time | date: 'h:mm a' }}</ion-note>        
+            </ion-label>                               
+        </ion-item>
+        <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+            <ion-infinite-scroll-content></ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+    </ion-list>
 </ion-content>

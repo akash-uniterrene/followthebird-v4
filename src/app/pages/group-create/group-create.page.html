@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title> Create Group </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-list>
+      <ion-item>
+        <ion-label position="floating">Name your Group</ion-label>
+        <ion-input type="text" [(ngModel)]="group.group_title" name="group_title"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Web Address</ion-label>
+        <ion-input type="text" [(ngModel)]="group.group_username" name="group_username"></ion-input>
+      </ion-item>		
+      <ion-item>
+        <ion-label>Privacy</ion-label>
+        <ion-select [(ngModel)]="group.group_privacy" name="group_privacy">
+          <ion-select-option value="public">Public Group</ion-select-option>
+          <ion-select-option value="closed">Closed Group</ion-select-option>
+          <ion-select-option value="secret">Secret Group</ion-select-option>
+        </ion-select>	  
+      </ion-item>
+      
+      <ion-item>
+        <ion-label position="floating">Describe your group</ion-label>
+        <ion-input type="text" [(ngModel)]="group.group_description" name="group_description"></ion-input>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+  <ion-footer>
+    <ion-button expand="full" (click)="createGroup();">Create Group</ion-button>
+  </ion-footer>

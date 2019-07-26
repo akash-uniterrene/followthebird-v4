@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavController, ActionSheetController, IonInfiniteScroll, Platform } from '@ionic/angular';
 import { PostService } from '../../service/post.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-tabs',
   templateUrl: 'tabs.page.html',
@@ -47,8 +48,8 @@ export class TabsPage {
 	slideOpts = {
 		initialSlide: 3,
 		speed: 400
-    };
-	constructor(public platform: Platform,public post: PostService) {
+	};
+	constructor(public platform: Platform,public router: Router, public post: PostService) {
 	  platform.ready().then((readySource) => {
 		this.width = platform.width();
 		this.height = platform.height();
@@ -56,22 +57,22 @@ export class TabsPage {
 	}
 	
     ionViewDidLoad() {
-		this.getStories();
-		this.isAndroid = this.platform.is("android");
-		this.postElement['handle'] = "me";
-		this.postElement['id'] = '';  
-		this.post.getfeeds('newsfeed',localStorage.getItem('user_id'),localStorage.getItem('user_id'),{})
-		.then(data => {
-		  this.postFeeds = [];
-		  let item = data[0];
-		  localStorage.setItem('last_post_live',item[0].post_id);
-		  for (var key in item) {
-			if(item[key].post_type == 'photos'){
-				this.post_type.photos = "added "+item[key].photos_num+" photos";
-			}
-			this.postFeeds.push(item[key]);
-		  }
-		});
+			this.getStories();
+			this.isAndroid = this.platform.is("android");
+			this.postElement['handle'] = "me";
+			this.postElement['id'] = '';  
+			this.post.getfeeds('newsfeed',localStorage.getItem('user_id'),localStorage.getItem('user_id'),{})
+			.then(data => {
+				this.postFeeds = [];
+				let item = data[0];
+				localStorage.setItem('last_post_live',item[0].post_id);
+				for (var key in item) {
+				if(item[key].post_type == 'photos'){
+					this.post_type.photos = "added "+item[key].photos_num+" photos";
+				}
+				this.postFeeds.push(item[key]);
+				}
+			});
     }
 	
   getStories(){
@@ -106,24 +107,33 @@ export class TabsPage {
   }
   
   getBackgroundStyle(url){
-	if(!url){
-		return 'url(http://www.sclance.com/pngs/avatar-png/avatar_png_71508.png)'
-	} else {
-		return 'url(' + this.mediapath+url + ')'
-	}
+		if(!url){
+			return 'url(http://www.sclance.com/pngs/avatar-png/avatar_png_71508.png)'
+		} else {
+			return 'url(' + this.mediapath+url + ')'
+		}
   }
   
   getStoryBackgroundStyle(media){
-	if(media != 'null'){
-		let obj = JSON.parse(media)
-		return 'url(' + this.mediapath+obj[0].src + ')'
-	} else {
-		return 'url(http://www.sclance.com/pngs/avatar-png/avatar_png_71508.png)'
-	}
+		if(media != 'null'){
+			let obj = JSON.parse(media)
+			return 'url(' + this.mediapath+obj[0].src + ')'
+		} else {
+			return 'url(http://www.sclance.com/pngs/avatar-png/avatar_png_71508.png)'
+		}
   }
 	
   getMedia(media){
-	let obj = JSON.parse(media)
-	return this.mediapath+obj[0].src;
-  }
+		let obj = JSON.parse(media)
+		return this.mediapath+obj[0].src;
+	}
+	
+	getMessages(){
+		this.router.navigate(['/messages']);
+	}
+
+	getPicture(){
+		this.router.navigate(['/add-story']);
+	}
+
 }

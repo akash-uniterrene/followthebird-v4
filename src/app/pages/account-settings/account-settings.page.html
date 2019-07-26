@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-back-button slot="start"></ion-back-button>
+    <ion-title>Account Settings</ion-title>
+  </ion-toolbar>
+  <ion-segment [(ngModel)]="settingszone" >
+      <ion-segment-button value="email" >
+        Email
+      </ion-segment-button>
+      <ion-segment-button value="password">
+        Password
+      </ion-segment-button>
+  </ion-segment>
+</ion-header>
+
+<ion-content>
+    <div [ngSwitch]="settingszone">
+      <ion-list *ngSwitchCase="'email'">
+         <ion-item>
+          <ion-label color="primary" position="floating">Update Email Address</ion-label>
+          <ion-input type="email" [(ngModel)]="emailForm.user_email" name="user_email"></ion-input>
+         </ion-item>	 
+      </ion-list>
+      <ion-list *ngSwitchCase="'password'">
+        <ion-item>
+          <ion-label color="primary" position="floating">Current Password</ion-label>
+          <ion-input type="password" [(ngModel)]="settings.current" name="current"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label color="primary" position="floating">New Password</ion-label>
+          <ion-input type="password" [(ngModel)]="settings.new" name="new"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label color="primary" position="floating">Confirm Password</ion-label>
+          <ion-input type="password" [(ngModel)]="settings.confirm" name="confirm"></ion-input>
+        </ion-item>	 
+      </ion-list>
+      
+    </div>
+  </ion-content>
+  <ion-footer>
+    <ion-button class="ion-no-padding" expand="full" (click)="saveEmail();" *ngIf="settingszone == 'email'">Save Email</ion-button>
+    <ion-button class="ion-no-padding" expand="full" (click)="savePassword();" *ngIf="settingszone != 'email'">Save Password</ion-button>
+  </ion-footer>

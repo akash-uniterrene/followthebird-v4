@@ -1,1 +1,381 @@
-<ion-content></ion-content>
+<ion-header *ngIf="headerActive">
+    <ion-toolbar color="primary">
+        <ion-back-button slot="start"></ion-back-button>
+        <ion-title>{{profile.user_firstname}} {{profile.user_lastname}}</ion-title>
+        <ion-buttons slot="end">
+            <ion-button slot="icon-only" (click)="openSearch()"><ion-icon ios="ios-search" md="md-search"></ion-icon></ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content *ngIf="readyState=='true'">
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content
+            pullingIcon="arrow-dropdown"
+            pullingText="Pull to refresh"
+            refreshingSpinner="circles"
+            refreshingText="Refreshing...">
+        </ion-refresher-content>
+    </ion-refresher>
+    <div class="profileAndCover" (click)="uploadCoverPicture(profile)"  [style.backgroundImage]="getCoverBackgroundStyle()" >
+        <ion-button  class="editcoverBtn" *ngIf="profile.user_id == myId">
+            <ion-icon color="white" name="camera" role="img" class="icon icon-ios ion-ios-camera" aria-label="camera"></ion-icon>
+        </ion-button>
+    </div>
+    <ion-grid class="profileHeadGrid">
+        <ion-row>
+            <ion-col size="3" >  
+                <div class="profileWrap" (click)="uploadProfilePicture(profile)">
+                    <div class="profileImgArea">
+                     <img [src]="imageURL+profile.user_picture" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'" >            
+                    </div>
+                    <ion-button slot="icon-only" class="profile-img" *ngIf="profile.user_id == myId">					
+                     <ion-icon color="white" name="camera" role="img" class="icon icon-ios ion-ios-camera" aria-label="camera"></ion-icon>
+                    </ion-button>
+                </div>
+            </ion-col>
+            <ion-col size="9" class="profileText">
+                <h5>{{profile.user_firstname}} {{profile.user_lastname}}</h5>
+                <p *ngIf="profile.user_biography != ''">{{profile.user_biography}}</p>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <ion-grid class="editGrid" *ngIf="profile.user_id == myId">
+        <ion-row>
+            <ion-col size="4" >
+                <ion-button  fill="clear" block expand="full" (click)="editProfile(profile)"> 
+                    <ion-icon name="create"></ion-icon>
+                    Edit Profile 
+                </ion-button>
+            </ion-col>	  
+            <ion-col size="4" >
+                <ion-button  fill="clear" block expand="full" (tap)="activityAction()">  
+                <ion-icon name="list"></ion-icon>
+                Activity Log
+                </ion-button>
+            </ion-col>
+            <ion-col size="4">
+            <ion-button  fill="clear" block expand="full" (tap)="moreActivityAction()"> 
+                <ion-icon name="more"></ion-icon>
+                More
+            </ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <ion-grid class="editGrid" *ngIf="profile.user_id != myId"> 
+        <ion-row>
+            <ion-col size="3">
+            <ion-button fill="clear" block expand="full" *ngIf="profile.we_friends" (click)="friendsAction()"> 
+                <ion-icon name="person"></ion-icon>
+                Friends
+            </ion-button>
+            <ion-button fill="clear" block expand="full" *ngIf="profile.he_request" (click)="responseAction()"> 
+                <ion-icon name="person-add"></ion-icon>
+                Respond
+            </ion-button>
+            <ion-button fill="clear" block expand="full" *ngIf="profile.i_request" (click)="sentAction()"> 
+                <ion-icon name="person-add"></ion-icon>
+                Sent
+            </ion-button>
+            <ion-button fill="clear" block expand="full" *ngIf="!profile.i_request && !profile.he_request && !profile.we_friends" (click)="addAction()"> 
+                <ion-icon name="person-add"></ion-icon>
+                Add Friend
+            </ ion-button>
+            </ion-col>	  
+            <ion-col size="3">
+                <ion-button  fill="clear" block expand="full" *ngIf="profile.i_follow" (click)="unfollowAction()">  
+                <ion-icon name="list-outline"></ion-icon>
+                Following
+                </ion-button>
+                <ion-button fill="clear" block expand="full" *ngIf="!profile.i_follow" (click)="followAction()">  
+                <ion-icon name="list-outline"></ion-icon>
+                Follow
+                </ion-button>	  
+            </ion-col>  
+            <ion-col size="3">
+                <ion-button fill="clear" block expand="full" (click)="messageAction(profile)">  
+                <ion-icon name="chatbubbles"></ion-icon>
+                Message
+                </ion-button>
+            </ion-col>	
+            <ion-col size="3">
+            <ion-button fill="clear" block expand="full" (click)="moreAction()"> 
+                <ion-icon name="more"></ion-icon>
+                More
+            </ion-button>
+            </ion-col>
+        </ion-row>
+     </ion-grid>     
+    <ion-grid class="basicInfoGrid" >
+      <ion-row >
+        <ion-col size="12">
+            <ion-list lines="none">
+                <ion-item *ngIf="profile.user_work_place" class="ion-no-padding item-borderless">
+                    <ion-icon slot="start" name="briefcase" ></ion-icon>
+                    <ion-label>{{profile.user_work_title}} at <b>{{profile.user_work_place}}</b> </ion-label>               
+                </ion-item>
+                <ion-item *ngIf="profile.user_edu_major" class="ion-no-padding item-borderless">
+                    <ion-icon slot="start" name="school"></ion-icon>
+                    <ion-label>Studied at <b>{{profile.user_edu_major}}</b></ion-label>            
+                </ion-item>
+                <ion-item *ngIf="profile.user_edu_school" class="ion-no-padding item-borderless">
+                    <ion-icon name="school"></ion-icon>
+                    Went to <b>{{profile.user_edu_school}}</b>            
+                </ion-item>
+                <ion-item *ngIf="profile.user_hometown" class="ion-no-padding item-borderless">
+                    <ion-icon name="home"></ion-icon>
+                    <ion-label>Hometown <b>{{profile.user_hometown}}</b></ion-label>
+                </ion-item>
+                <ion-item *ngIf="profile.user_current_city" class="ion-no-padding item-borderless">
+                    <ion-icon name="locate"></ion-icon>
+                    <ion-label>Lives in <b> {{profile.user_current_city}} </b></ion-label>
+                </ion-item>
+                <ion-item *ngIf="profile.user_relationship" class="ion-no-padding item-borderless">
+                    <ion-icon name="heart"></ion-icon>
+                    <b *ngIf="profile.user_relationship == 'relationship'" > In a Relationship</b>             
+                    <b *ngIf="profile.user_relationship == 'complicated'" > It's complicated</b>             
+                    <b *ngIf="profile.user_relationship == 'single'" > Single</b>             
+                </ion-item>
+                <ion-item *ngIf="profile.user_gender" class="ion-no-padding item-borderless">
+                    <ion-icon slot="start" name="male" ></ion-icon>
+                    <ion-label><b>{{profile.user_gender}}</b></ion-label>
+                </ion-item>
+                <ion-item *ngIf="profile.followers_count" class="ion-no-padding">
+                    <ion-icon slot="start" ios="logo-rss" md="logo-rss"></ion-icon>
+                    <ion-label>Followed by <b>{{profile.followers_count}}</b> people</ion-label>
+                </ion-item>                  
+                </ion-list>
+        </ion-col>                         
+        </ion-row>           
+    </ion-grid>
+    <ion-button fill="outline" expand="block" class="mainEditProfile" *ngIf="profile.user_id == myId" (click)="editDetails(profile)" >
+        <ion-icon name="create"></ion-icon>
+        Edit Details 
+    </ion-button>
+    <ion-grid class="editGrid lowHeight">
+        <ion-row>
+        <ion-col size="4">
+            <ion-button fill="clear" expand="block" (click)="viewAbout()">               
+                About
+            </ion-button>
+        </ion-col>
+        <ion-col size="4">
+            <ion-button fill="clear" expand="block" (click)="viewPhotos(profile.user_id)">               
+                Photos
+            </ion-button>
+            </ion-col>
+            <ion-col size="4">
+                <ion-button fill="clear" expand="block" (click)="listFriends()">                  
+                    Friends
+                </ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>       
+    <!--<whats-on-mind [handle]="postElement" ></whats-on-mind>  --> 
+    <ion-grid class="photosGrid">
+        <ion-row>
+            <ion-col size="12" class="sectionHead">
+                <button ion-fab class="profile-img">								
+                    <ion-icon ios="ios-image" md="ios-image"></ion-icon>
+                </button>
+                <p>Photos</p>
+            </ion-col>
+            <ion-col *ngFor="let photo of photos | slice:0:6; let i=index" [id]="i" size="4">		
+                <div class="ImgWrapBig" [style.backgroundImage]="getBackgroundStyle(photo.source)" (click)="viewImage(photo)">                
+                </div>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+            
+            <ion-grid class="friendsGrid" margin-top *ngIf="friendLists.length > 0">
+                <ion-row>
+                    <ion-col size="12" class="sectionHead">
+                        <ion-button slot="icon-only" class="profile-img" >								
+                            <ion-icon ios="ios-image" md="ios-contacts" color="white"></ion-icon>
+                        </ion-button>
+                        <p>Friends</p>
+                    </ion-col>
+                    <ion-col size="4" *ngFor="let friend of friendLists | slice:0:6; let i=index">		
+                        <div class="ImgWrapSmall" [style.backgroundImage]="getBackgroundStyle(friend.user_picture)" (click)="viewProfile(friend.user_name,friend.user_id)" >                               
+                        </div>
+                        <p (click)="viewProfile(friend.user_name)"><strong>{{friend.user_firstname}} {{friend.user_lastname}}</strong></p>
+                    </ion-col>         
+                </ion-row>
+            </ion-grid>
+            <ion-grid class="friendsGrid" margin-top>
+                <ion-row>
+                    <ion-col size="12" class="sectionHead">
+                        <button ion-fab class="profile-img" >								
+                            <ion-icon ios="ios-image" md="ios-contacts"></ion-icon>
+                        </button>
+                        <p>Posts</p>
+                    </ion-col> 
+                </ion-row>
+            </ion-grid>
+            <ion-card *ngFor="let feeds of postFeeds ; let i = index" >
+                    <ion-item class="ion-text-wrap">
+                        <ion-avatar slot="start" (click)="viewProfile(feeds)">
+                            <img [src]="mediapath+feeds.post_author_picture" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'" />
+                        </ion-avatar>
+                        <ion-label>
+                                <span style="font-weight:bold;padding-right:3px;" (click)="viewProfile(feeds)">{{feeds.post_author_name}}</span> 
+                                <span *ngIf="feeds.feeling_action"> is - <ion-icon [name]="feeds.feeling_icon"></ion-icon> {{feeds.feeling_action}} {{feeds.feeling_value}}</span>
+                                <span *ngIf="feeds.post_type == 'profile_picture' || feeds.post_type == 'profile_cover'">
+                                    {{post_type[feeds.post_type+'_'+feeds.user_gender]}}</span>
+                                <span *ngIf="feeds.post_type != 'profile_cover' || feeds.post_type != 'profile_picture'" > {{post_type[feeds.post_type]}} </span>
+                                <span *ngIf="feeds.wall_id > '0'" > to <strong>{{feeds.wall_fullname}}'s</strong> Timeline</span>
+                                <span *ngIf="feeds.post_type == 'shared'" > <strong (click)="viewProfile(feeds.origin)">{{feeds.origin.post_author_name}}</strong>'s Post </span>
+                                <span *ngIf="feeds.in_event == '1'" style="display:inline-block;"><ion-icon name="play" style="font-size: 11px;color: #750bb5;padding-right: 3px;"></ion-icon> <ion-icon name='calendar' style="color:#b5af0b;padding: 0;margin: 0;padding-right: 3px;" slot="start"></ion-icon>  {{feeds.event_title}}</span>
+                                <ion-note class="msg_time" style="display:block" *ngIf="isAndroid">{{feeds.time | date: 'dd MMM' }} at {{ feeds.time | date: 'h:mm a' }}</ion-note> 
+                        </ion-label>	  
+                    </ion-item>
+                <ion-card-content *ngIf="feeds.text" >
+                    <p style="padding-bottom: 3px;padding-left: 10px;" [innerHtml]="feeds.text"></p>
+                </ion-card-content>  
+                <div (click)="viewPost(feeds)">
+                    <div class="pg_wrapper" *ngIf="feeds.photos_num <= 2">
+                        <div class="pg_{{feeds.photos_num}}x" *ngFor="let photo of feeds.photos" [style.backgroundImage]="getBackgroundStyle(photo.source)" [style.height.px]="width/feeds.photos_num">
+                        </div>
+                    </div>	
+                    <div class="pg_wrapper" *ngIf="feeds.photos_num == 3">
+                        <div class="pg_1x" [style.backgroundImage]="getBackgroundStyle(feeds.photos[0].source)" [style.height.px]="width/2">
+                        </div>
+                        <div class="pg_1x " [style.height.px]="width/2">
+                            <div class="pg_2x" [style.height.px]="width/2" *ngFor="let photo of feeds.photos | slice:1:4; " [style.backgroundImage]="getBackgroundStyle(photo.source)" ></div>
+                        </div>
+                    </div>		
+                    <div class="pg_wrapper" *ngIf="feeds.photos_num == 4">
+                        <div class="pg_{{feeds.photos_num}}x" *ngFor="let photo of feeds.photos" [style.backgroundImage]="getBackgroundStyle(photo.source)" [style.height.px]="width/feeds.photos_num">
+                        </div>
+                    </div>
+                    <div class="pg_wrapper" *ngIf="feeds.photos_num >= 5">
+                        <div class="pg_2x" [style.backgroundImage]="getBackgroundStyle(feeds.photos[0].source)" [style.height.px]="width/2"></div>
+                        <div class="pg_2x " [style.height.px]="width/2">
+                            <div class="pg_4x" [style.height.px]="width/4" *ngFor="let photo of feeds.photos | slice:1:4; " [style.backgroundImage]="getBackgroundStyle(photo.source)" ></div>
+                            <div class="pg_4x" style="position:relative" [style.height.px]="width/4" *ngFor="let photo of feeds.photos | slice:4:5; " [style.backgroundImage]="getBackgroundStyle(photo.source)" >
+                                <div class="more" *ngIf="feeds.photos_num > 5" >
+                                 <span class="more-number">
+                                     +{{feeds.photos_num - 5}}
+                                 </span>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>		
+                    <div *ngIf="feeds.post_type == 'video'">
+                        <video *ngFor="let vid of feeds.video" style="width:100%" controls preload="metadata" webkit-playsinline="webkit-playsinline" class="videoPlayer">
+                            <source [src]="mediapath+vid.source" type="video/mp4"/>
+                        </video>
+                    </div>
+                    <div *ngIf="feeds.post_type == 'audio'" style="text-align: center;">
+                        <audio controls *ngFor="let aud of feeds.audio">
+                          <source [src]="mediapath+aud.source" type="audio/mpeg">
+                          Your browser does not support the audio element.
+                        </audio>
+                    </div>	
+                    <div *ngIf="feeds.post_type == 'file'">
+                        <ion-item *ngFor="let attch of feeds.file" >
+                          <ion-thumbnail slot="start">
+                            <img src="assets/followthebirdImgs/text-file-icon.png">
+                          </ion-thumbnail>
+                          <h2>Attachment.zip</h2>
+                          <a ion-button padding href="{{imageURL+attch.source}}" download>
+                            Download
+                          </a>
+                        </ion-item>
+                    </div>
+                    <div *ngIf="feeds.post_type == 'shared'">
+                        <ion-card>
+                            <ion-item text-wrap>
+                              <ion-avatar slot="start" (click)="viewProfile(feeds.origin)">
+                                    <img [src]="mediapath+feeds.origin.post_author_picture" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'" />
+                                </ion-avatar>
+                                <ion-label>
+                                    <span style="font-weight:bold;padding-right:3px;" (click)="viewProfile(feeds.origin)"> {{feeds.origin.post_author_name}} </span> 
+                                    <span *ngIf="feeds.origin.feeling_action != ''" > is {{feeds.origin.feeling_action}} {{feeds.origin.feeling_value}} </span>
+                                    {{post_type[feeds.origin.post_type]}}
+                                    <span *ngIf="feeds.in_event == '1'"><ion-icon name="play" style="font-size: 11px;color: #750bb5;padding-right: 3px;"></ion-icon> <ion-icon name='calendar' style="color:#b5af0b;padding: 0;margin: 0;padding-right: 3px;" slot="start"></ion-icon>  {{feeds.origin.event_title}}</span>
+                                    <p>{{feeds.origin.time}}</p>
+                                </ion-label>
+                            </ion-item>
+                            <ion-card-content>
+                                <p style="padding-bottom: 3px;padding-left: 20px;">{{feeds.origin.text}}</p>					
+                                <div class="pg_wrapper" *ngIf="feeds.origin.photos_num <= 2">
+                                    <div class="pg_{{feeds.origin.photos_num}}x" *ngFor="let photo of feeds.photos" [style.backgroundImage]="getBackgroundStyle(photo.source)" [style.height.px]="width/feeds.origin.photos_num">
+                                    </div>
+                                </div>
+                                <div class="pg_wrapper" *ngIf="feeds.origin.photos_num == 3">
+                                    <div class="pg_1x" [style.backgroundImage]="getBackgroundStyle(feeds.origin.photos[0].source)" [style.height.px]="width/2">
+                                    </div>
+                                    <div class="pg_1x " [style.height.px]="width/2">
+                                        <div class="pg_2x" [style.height.px]="width/2" *ngFor="let photo of feeds.origin.photos | slice:1:4; " [style.backgroundImage]="getBackgroundStyle(photo.source)" ></div>
+                                    </div>
+                                </div>		
+                                <div class="pg_wrapper" *ngIf="feeds.origin.photos_num == 4">
+                                    <div class="pg_{{feeds.origin.photos_num}}x" *ngFor="let photo of feeds.origin.photos" [style.backgroundImage]="getBackgroundStyle(photo.source)" [style.height.px]="width/feeds.origin.photos_num">
+                                    </div>
+                                </div>
+                                <div class="pg_wrapper" *ngIf="feeds.origin.photos_num >= 5">
+                                    <div class="pg_2x" [style.backgroundImage]="getBackgroundStyle(feeds.origin.photos[0].source)" [style.height.px]="width/2"></div>
+                                    <div class="pg_2x " [style.height.px]="width/2">
+                                        <div class="pg_4x" [style.height.px]="width/4" *ngFor="let photo of feeds.origin.photos | slice:1:4; " [style.backgroundImage]="getBackgroundStyle(photo.source)" ></div>
+                                        <div class="pg_4x" style="position:relative" [style.height.px]="width/4" *ngFor="let photo of feeds.origin.photos | slice:4:5; " [style.backgroundImage]="getBackgroundStyle(photo.source)" >
+                                            <div class="more" *ngIf="feeds.origin.photos_num > 5" >
+                                             <span class="more-number">
+                                                 +{{feeds.origin.photos_num - 5}}
+                                             </span>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <div *ngIf="feeds.origin.post_type == 'video'">
+                                    <video *ngFor="let originvid of feeds.origin.video" style="width:100%" controls preload="metadata" webkit-playsinline="webkit-playsinline" class="videoPlayer">
+                                        <source [src]="mediapath+originvid.source" type="video/mp4"/>
+                                    </video>
+                                </div>
+                                <div *ngIf="feeds.origin.post_type == 'audio'">
+                                    <audio controls *ngFor="let aud of feeds.origin.audio">
+                                      <source [src]="mediapath+aud.source" type="audio/mpeg">
+                                      Your browser does not support the audio element.
+                                    </audio>
+                                </div>	
+                                <div *ngIf="feeds.origin.post_type == 'file'">
+                                    <ion-item *ngFor="let attch of feeds.origin.file" >
+                                      <ion-thumbnail slot="start">
+                                        <img src="assets/followthebirdImgs/text-file-icon.png">
+                                      </ion-thumbnail>
+                                      <h2>Attachment.zip</h2>
+                                      <button ion-button padding (click)="downloadAttachment(attch.source)">
+                                        Download
+                                      </button>
+                                    </ion-item>
+                                </div>		
+                            </ion-card-content>
+                        </ion-card>
+                    </div>
+                </div>
+                <ion-row>
+                    <ion-col size="3">
+                            <ion-button color="primary" fill="clear" (click)="viewComments(i,feeds.post_comments,feeds.post_id)">
+                                    <ion-icon slot="start" name="text"></ion-icon>
+                                    {{feeds.comments}} Comments
+                            </ion-button>
+                    </ion-col>
+                    <ion-col size="5"></ion-col>
+                    <ion-col size="3">
+                             <ion-button class="ion-text-right" color="primary" fill="clear" (click)="sharePostCtrl(feeds.post_id)" *ngIf="feeds.privacy == 'public'">
+                                    <ion-icon slot="start" name="share"></ion-icon>
+                                    Share
+                            </ion-button>
+                    </ion-col>
+                </ion-row>	
+             </ion-card>
+            <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+               <ion-infinite-scroll-content></ion-infinite-scroll-content>
+            </ion-infinite-scroll>
+        </ion-content>
+        <ion-content *ngIf="readyState=='false'">
+          <div class="loader">
+            <ion-spinner name="bubbles" class="loading_spinner"></ion-spinner>
+          </div>
+        </ion-content>

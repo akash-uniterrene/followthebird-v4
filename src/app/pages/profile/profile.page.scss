@@ -1,1 +1,172 @@
+.ion-content {
+    background-color: #bfb8b8;
+}
+.loader{
+    position:relative;
+    width:100%;
+    height:100%;
+}
+.loading_spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.grid {
+    background-color: #fff;
+}
+.scroll-content{
+    padding: 0 !important;
+}
+.profileAndCover{
+    width: 100%;
+    height:170px;
+    position: relative;
+    background-size: cover !important;
+    background-position: center center !important;  
+}
 
+.profileAndCover ion-button {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 99999;
+    margin: 0;
+    font-size: 11px;
+    box-shadow: none;
+    height: 27px;
+    background: rgba(255,255,255,.5);
+    color: #000;
+}
+.profileAndCover ion-button ion-icon{
+    margin-right: 10px;
+    font-size: 20px;
+}
+.profileWrap{
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+.profileWrap ion-button {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    bottom: 0;
+    right: 0;
+}
+.profileWrap ion-button ion-icon{
+    font-size: 16px;
+}
+.profileImgArea{
+    border-radius: 50%;        
+    overflow: hidden;
+    width: 80px;
+    height: 80px;
+    position: relative;
+}
+.profileImgArea img{
+    width: 100%;
+    height: 100%;
+}
+
+.profileHeadGrid {
+    margin-top: -50px;
+}
+.profileHeadGrid .profileText{
+    margin-top: 50px;
+}
+.profileHeadGrid .profileText p{
+    font-size: 9px;
+    margin-bottom: 0;
+}
+.profileHeadGrid .profileText button{
+    margin:0;
+    font-size: 10px;
+    height: 25px;
+}
+
+.editGrid{
+    border-top: 2px solid #ddd;
+    border-bottom: 2px solid #ddd;
+    padding: 0;
+}
+.editGrid ion-col{
+    padding: 0;
+    border-right: 2px solid #ddd;
+}
+.editGrid ion-col:last-child{
+    padding: 0;
+    border-right: none;
+}
+.editGrid button{            
+    min-height: 6rem;
+    height: 100%;
+    color: #3a3a3a;
+    text-transform: none;
+    margin: 0;
+}
+.editGrid .button-inner{
+    flex-direction: column;
+}
+.editGrid .button-inner ion-icon{
+    font-size: 30px;
+    color: #3a3a3a;
+}
+.basicInfoGrid ion-item{
+    padding-left: 0;
+    font-size: 13px;
+    min-height: auto;
+}
+.basicInfoGrid ion-item .item-inner{
+    border:none !important;
+}
+.basicInfoGrid ion-item ion-label{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.basicInfoGrid ion-item ion-icon{
+    margin-right: 12px;
+}
+.mainEditProfile ion-icon{
+    font-size: 30px;
+    margin-right: 15px;
+}
+
+.editGrid.lowHeight button{
+    min-height: 4rem;
+}
+.sectionHead{
+    display: flex;
+    align-items: center;
+}    
+.sectionHead button{
+    width: 30px;
+    height: 30px;
+    box-shadow: none;
+    margin-right: 15px;
+}
+.sectionHead p{
+    margin:0;
+}
+.sectionHead ion-icon{
+    font-size: 15px;
+}
+
+.ImgWrapBig{
+    height: 160px;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important; 
+}
+.ImgWrapSmall{
+    height: 100px;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+}
+.photosGrid ion-col{
+    padding: 3px;
+}
+.card-content {
+    padding:0;
+}

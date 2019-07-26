@@ -1,0 +1,28 @@
+<ion-header style="background-size: cover;" [style.backgroundImage]="getBackgroundStyle(photoAlbum.cover)">
+  <ion-toolbar color="primary" >
+    <ion-back-button slot="start"></ion-back-button>
+    <ion-title>{{photoAlbum.title}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+    <!--<div class="album_banner" >
+  
+    </div>-->
+    <ion-grid class="AlbumGrid">
+      <ion-row class="ion-padding-top">
+          <ion-col size="9" class="sectionHead" class="ion-no-padding">
+            <ion-title style="text-align:center;">{{photoAlbum.title}}</ion-title>
+          </ion-col> 
+          <ion-col size="3" class="sectionHead" class="ion-no-padding">
+              <span style="text-align:center;">{{photoAlbum.privacy}}</span>
+            </ion-col>    
+      </ion-row>
+      
+      <ion-row class="ion-padding-top">
+          <ion-col size="4" class="album_photo" *ngFor="let photo of photoAlbum.photos" class="ion-no-padding"> 
+              <div class="ImgWrapSmall" [style.backgroundImage]="getBackgroundStyle(photo.source)" (click)="viewImage(photo)">                               
+              </div>   
+          </ion-col>      
+      </ion-row>
+  </ion-grid>
+  </ion-content>

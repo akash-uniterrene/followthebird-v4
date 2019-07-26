@@ -1,0 +1,24 @@
+<ion-content >
+    <ion-button [routerLink]="['','photos']" routerDirection="back" style="float: left;" color="light" fill="clear" >
+      <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+    </ion-button>  
+  <ion-button style="float: right;" color="light" fill="clear" (click)="photoActivity(photo)">
+      <ion-icon slot="icon-only" name="more"></ion-icon>
+  </ion-button>
+  <ion-button style="float: right;" color="light" fill="clear"  (click)="openSearch()">
+      <ion-icon slot="icon-only" ios="ios-search" md="md-search"></ion-icon>
+  </ion-button>
+  <div class="dark_page" (swipeleft)="getNextPhoto(photo.next)" (swiperight)="getPrevPhoto(photo.prev)" [style.backgroundImage]="getBackgroundStyle(photo.source)" >
+      <div [style.opacity]="screenBlur" (swipeleft)="getNextPhoto(photo.next)" (swiperight)="getPrevPhoto(photo.prev)">  </div>
+  </div>
+</ion-content>
+<ion-footer style="background: #000">
+    <ion-button fill="clear" color="light" (click)="viewComments()">
+        <ion-icon ios="ios-text" md="md-text"></ion-icon>
+        {{photo.comments}} Comments
+    </ion-button>     
+    <ion-button style="float: right;" fill="clear" color="light" slot="end" (click)="openSearch()">
+      Share
+      <ion-icon ios="ios-share-alt" md="md-share-alt"></ion-icon>  
+    </ion-button>
+</ion-footer>

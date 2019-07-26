@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Create New Event</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+		<ion-item>
+			<ion-label position="floating">Name your Event</ion-label>
+			<ion-input type="text" [(ngModel)]="event.event_title" name="event_title"></ion-input>
+		</ion-item>
+		<ion-item>
+			<ion-label position="floating">Location</ion-label>
+			<ion-input type="text" [(ngModel)]="event.event_location" name="event_location"></ion-input>
+		</ion-item>
+		<ion-item>
+			<ion-label position="floating">Start Date</ion-label>
+			<ion-datetime displayFormat="MM/DD/YYYY" [(ngModel)]="event.event_start_date" name="event_start_date" ></ion-datetime>
+		</ion-item>
+		<ion-item>
+			<ion-label position="floating">End Date</ion-label>
+			<ion-datetime displayFormat="MM/DD/YYYY" [(ngModel)]="event.event_end_date" name="event_end_date" ></ion-datetime>
+		</ion-item>
+		<ion-item>
+		  <ion-label>Category</ion-label>
+		  <ion-select [(ngModel)]="event.event_category" name="event_category">
+			<ion-select-option *ngFor="let categories of eventCategories" [value]="categories.category_id"> {{categories.category_name}} </ion-select-option>
+		  </ion-select>	  
+		</ion-item>
+		<ion-item>
+		  <ion-label>Privacy</ion-label>
+		  <ion-select [(ngModel)]="event.event_privacy" name="event_privacy">
+			<ion-select-option value="public">Public Event</ion-select-option>
+			<ion-select-option value="closed">Closed Event</ion-select-option>
+			<ion-select-option value="secret">Secret Event</ion-select-option>
+		  </ion-select>	  
+		</ion-item>
+		
+		<ion-item>
+			<ion-label position="floating">Describe your event</ion-label>
+			<ion-input type="text" [(ngModel)]="event.event_description" name="event_description"></ion-input>
+		</ion-item>
+	</ion-list>
+</ion-content>
+<ion-footer>
+  <ion-button expand="full" (click)="createEvent();">Create Event</ion-button>
+</ion-footer>

@@ -10,8 +10,8 @@ import { Router } from '@angular/router';
 })
 export class WelcomePage implements OnInit {
 	account: { user_name: string, user_password: string } = {
-		user_name: 'akash',
-		user_password: '12345678'
+		user_name: '',
+		user_password: ''
 	};
   constructor(
 	public storage: StorageService,
@@ -20,7 +20,7 @@ export class WelcomePage implements OnInit {
 	public NavCtrl: NavController
   ) {
 	 if(localStorage.getItem('user_firstname')){
-	   this.NavCtrl.navigateRoot("tabs");
+	   this.NavCtrl.navigateRoot("tabs/post");
 	 }
    }
    
@@ -31,7 +31,7 @@ export class WelcomePage implements OnInit {
     async doLogin() {
        this.settings.login(this.account).subscribe((resp) => {	
 			this.storage.setUser(resp);			
-			this.router.navigate(['/tabs']);     
+			this.router.navigate(['/tabs/post']);     
 	   }, (err) => {
 	   });
     }

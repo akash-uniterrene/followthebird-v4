@@ -7,22 +7,35 @@
 		  refreshingText="Refreshing...">
 		</ion-refresher-content>
 	</ion-refresher>
-    <ion-card *ngFor="let feeds of postFeeds ; let i = index" >
-	<ion-item text-wrap>
-	  <ion-avatar item-start (click)="viewProfile(feeds)">
-		<img [src]="mediapath+feeds.post_author_picture" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'" />
-	  </ion-avatar>
-	  <span style="font-weight:bold;padding-right:3px;" (click)="viewProfile(feeds)"> {{feeds.post_author_name}}</span> 
-	  <span *ngIf="feeds.feeling_action">is - <ion-icon [name]="feeds.feeling_icon"></ion-icon> {{feeds.feeling_action}} {{feeds.feeling_value}}</span>
-	  <span *ngIf="feeds.post_type == 'profile_picture' || feeds.post_type == 'profile_cover' " >
-		  {{post_type[feeds.post_type+'_'+feeds.user_gender]}}</span>
-	  <span *ngIf="feeds.post_type != 'profile_cover' || feeds.post_type != 'profile_picture'" >{{post_type[feeds.post_type]}}</span>
-	  <span *ngIf="feeds.wall_id > '0'" > to <strong>{{feeds.wall_fullname}}'s</strong> Timeline</span>
-	  <span *ngIf="feeds.post_type == 'shared'" > <strong (click)="viewProfile(feeds.origin)">{{feeds.origin.post_author_name}}</strong>'s Post</span>
-	  <span *ngIf="feeds.in_event == '1'" style="display:inline-block;"><ion-icon name="play" style="font-size: 11px;color: #750bb5;padding-right: 3px;"></ion-icon> <ion-icon name='calendar' style="color:#b5af0b;padding: 0;margin: 0;padding-right: 3px;" item-start></ion-icon>  {{feeds.event_title}}</span>
-	  <ion-note class="msg_time" style="display:block" *ngIf="isAndroid">{{feeds.time | date: 'dd MMM' }} at {{ feeds.time | date: 'h:mm a' }}</ion-note> 
-	  <button ion-button clear icon-only item-end (tap)="postActivity($event,feeds)"><ion-icon name="ios-more-outline"></ion-icon></button>
-	</ion-item>
+	<whats-on-mind [handle]="postElement"></whats-on-mind>
+	<ion-list>
+		<ion-item (click)="updateStatus()">
+			<ion-avatar slot="start">     
+				<img src="{{userPic}}" onError="this.src='../assets/followthebirdImgs/no-profile-img.jpeg'">
+			</ion-avatar>
+			<ion-button class="no_bgBtn" slot="end" >
+				<ion-icon slot="icon-only" name="images"></ion-icon>
+			</ion-button>
+			<ion-input (click)="updateStatus()" disabled type="text" value="" placeholder="Whats on your mind?"></ion-input>     
+		</ion-item>       
+	</ion-list>
+  <ion-card *ngFor="let feeds of postFeeds ; let i = index" >
+		<ion-item class="ion-text-wrap">
+			<ion-avatar slot="start" (click)="viewProfile(feeds)">
+				<img [src]="mediapath+feeds.post_author_picture" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'" />
+			</ion-avatar>
+			<ion-label>
+					<span style="font-weight:bold;padding-right:3px;" (click)="viewProfile(feeds)">{{feeds.post_author_name}}</span> 
+					<span *ngIf="feeds.feeling_action"> is - <ion-icon [name]="feeds.feeling_icon"></ion-icon> {{feeds.feeling_action}} {{feeds.feeling_value}}</span>
+					<span *ngIf="feeds.post_type == 'profile_picture' || feeds.post_type == 'profile_cover'">
+						{{post_type[feeds.post_type+'_'+feeds.user_gender]}}</span>
+					<span *ngIf="feeds.post_type != 'profile_cover' || feeds.post_type != 'profile_picture'" > {{post_type[feeds.post_type]}} </span>
+					<span *ngIf="feeds.wall_id > '0'" > to <strong>{{feeds.wall_fullname}}'s</strong> Timeline</span>
+					<span *ngIf="feeds.post_type == 'shared'" > <strong (click)="viewProfile(feeds.origin)">{{feeds.origin.post_author_name}}</strong>'s Post </span>
+					<span *ngIf="feeds.in_event == '1'" style="display:inline-block;"><ion-icon name="play" style="font-size: 11px;color: #750bb5;padding-right: 3px;"></ion-icon> <ion-icon name='calendar' style="color:#b5af0b;padding: 0;margin: 0;padding-right: 3px;" slot="start"></ion-icon>  {{feeds.event_title}}</span>
+					<ion-note class="msg_time" style="display:block" *ngIf="isAndroid">{{feeds.time | date: 'dd MMM' }} at {{ feeds.time | date: 'h:mm a' }}</ion-note> 
+			</ion-label>	  
+		</ion-item>
 	<ion-card-content *ngIf="feeds.text" >
 		<p style="padding-bottom: 3px;padding-left: 10px;" [innerHtml]="feeds.text"></p>
 	</ion-card-content>  
@@ -56,7 +69,6 @@
 				
 			</div>
 		</div>		
-		
 		<div *ngIf="feeds.post_type == 'video'">
 			<video *ngFor="let vid of feeds.video" style="width:100%" controls preload="metadata" webkit-playsinline="webkit-playsinline" class="videoPlayer">
 				<source [src]="mediapath+vid.source" type="video/mp4"/>
@@ -70,7 +82,7 @@
 		</div>	
 		<div *ngIf="feeds.post_type == 'file'">
 			<ion-item *ngFor="let attch of feeds.file" >
-			  <ion-thumbnail item-start>
+			  <ion-thumbnail slot="start">
 				<img src="assets/followthebirdImgs/text-file-icon.png">
 			  </ion-thumbnail>
 			  <h2>Attachment.zip</h2>
@@ -82,14 +94,16 @@
 		<div *ngIf="feeds.post_type == 'shared'">
 			<ion-card>
 				<ion-item text-wrap>
-				  <ion-avatar item-start (click)="viewProfile(feeds.origin)">
-					<img [src]="mediapath+feeds.origin.post_author_picture" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'" />
-				  </ion-avatar>
-				  <span style="font-weight:bold;padding-right:3px;" (click)="viewProfile(feeds.origin)"> {{feeds.origin.post_author_name}}</span> 
-				  <span *ngIf="feeds.origin.feeling_action != ''" >is {{feeds.origin.feeling_action}} {{feeds.origin.feeling_value}}</span>
-				  {{post_type[feeds.origin.post_type]}}
-				  <span *ngIf="feeds.in_event == '1'"><ion-icon name="play" style="font-size: 11px;color: #750bb5;padding-right: 3px;"></ion-icon> <ion-icon name='calendar' style="color:#b5af0b;padding: 0;margin: 0;padding-right: 3px;" item-start></ion-icon>  {{feeds.origin.event_title}}</span>
-				  <p>{{feeds.origin.time}}</p>
+				  <ion-avatar slot="start" (click)="viewProfile(feeds.origin)">
+						<img [src]="mediapath+feeds.origin.post_author_picture" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'" />
+					</ion-avatar>
+					<ion-label>
+						<span style="font-weight:bold;padding-right:3px;" (click)="viewProfile(feeds.origin)"> {{feeds.origin.post_author_name}} </span> 
+						<span *ngIf="feeds.origin.feeling_action != ''" > is {{feeds.origin.feeling_action}} {{feeds.origin.feeling_value}} </span>
+						{{post_type[feeds.origin.post_type]}}
+						<span *ngIf="feeds.in_event == '1'"><ion-icon name="play" style="font-size: 11px;color: #750bb5;padding-right: 3px;"></ion-icon> <ion-icon name='calendar' style="color:#b5af0b;padding: 0;margin: 0;padding-right: 3px;" slot="start"></ion-icon>  {{feeds.origin.event_title}}</span>
+						<p>{{feeds.origin.time}}</p>
+					</ion-label>
 				</ion-item>
 				<ion-card-content>
 					<p style="padding-bottom: 3px;padding-left: 20px;">{{feeds.origin.text}}</p>					
@@ -135,7 +149,7 @@
 					</div>	
 					<div *ngIf="feeds.origin.post_type == 'file'">
 						<ion-item *ngFor="let attch of feeds.origin.file" >
-						  <ion-thumbnail item-start>
+						  <ion-thumbnail slot="start">
 							<img src="assets/followthebirdImgs/text-file-icon.png">
 						  </ion-thumbnail>
 						  <h2>Attachment.zip</h2>
@@ -148,28 +162,26 @@
 			</ion-card>
 		</div>
 	</div>
-    <ion-row>
-      <ion-col>
-        <button ion-button color="primary" clear small icon-start (click)="viewComments(i,feeds.post_comments,feeds.post_id)">
-            <ion-icon ios="ios-text" md="md-text"></ion-icon>
-            {{feeds.comments}} Comments
-        </button>
-      </ion-col>
-	  <ion-col>
-	  </ion-col>
-      <ion-col>
-        <button ion-button color="primary" clear small icon-end right (click)="sharePostCtrl(feeds.post_id)" *ngIf="feeds.privacy == 'public'">
-            Share
-			<ion-icon ios="ios-share-alt" md="md-share-alt"></ion-icon>           
-        </button>
-      </ion-col>
-      
-    </ion-row>
-  </ion-card>
-  <ion-infinite-scroll threshold="100px" (ionInfinite)="doInfinite($event)">
+	<ion-row>
+		<ion-col size="3">
+				<ion-button color="primary" fill="clear" (click)="viewComments(i,feeds.post_comments,feeds.post_id)">
+						<ion-icon slot="start" name="text"></ion-icon>
+						{{feeds.comments}} Comments
+				</ion-button>
+		</ion-col>
+		<ion-col size="5"></ion-col>
+		<ion-col size="3">
+				 <ion-button class="ion-text-right" color="primary" fill="clear" (click)="sharePostCtrl(feeds.post_id)" *ngIf="feeds.privacy == 'public'">
+						<ion-icon slot="start" name="share"></ion-icon>
+						Share
+				</ion-button>
+		</ion-col>
+	</ion-row>	
+ </ion-card>
+ <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
     <ion-infinite-scroll-content
       loadingSpinner="bubbles"
       loadingText="Loading more data...">
     </ion-infinite-scroll-content>
-  </ion-infinite-scroll>
+ </ion-infinite-scroll>
 </ion-content>

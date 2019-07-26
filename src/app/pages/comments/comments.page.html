@@ -1,0 +1,95 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-back-button slot="start"></ion-back-button>
+    <ion-title> {{title}} </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content (click)="hideSticker()">
+    <ion-list no-lines *ngFor="let comment of comments" text-wrap>
+      <ion-item >
+      <ion-avatar item-start>
+        <img [src]="imageURL+comment.author_picture" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'">
+      </ion-avatar>
+      <ion-label class="commant-wrap"> 
+        <div  class="comment-box" >
+          <h3>{{comment.author_name}}</h3>
+          <div *ngIf="stickers.hasOwnProperty(comment.text) == false"><div [innerHtml]="comment.text"></div></div>
+          <div *ngIf="stickers.hasOwnProperty(comment.text) == true"><img [src]="imageURL+stickers[comment.text]" ></div>
+          <img class="comment_image" *ngIf="comment.image != ''" [src]="imageURL+comment.image">
+        </div>			
+      </ion-label>		
+      </ion-item>
+      <ion-item class="reply_option" >
+      <p class="reply-box" (click)="setReplyComment(comment.comment_replies,comment.comment_id)"> Reply </p>
+      <p class="reply-box allreply-box" *ngIf="comment.comment_replies_count > 1" (click)="setReplyComment(comment.comment_replies,comment.comment_id)"> view all {{comment.comment_replies_count}} replies</p>
+      </ion-item>
+      <div class="comment_replies" *ngIf="comment.comment_replies_count > 0">
+        <ion-item *ngFor="let replies of comment.comment_replies | slice:0:1; let i=index" text-wrap>
+          <ion-avatar item-start>
+            <img [src]="imageURL+replies.author_picture">
+          </ion-avatar>
+          <ion-label class="comment-box"> 
+            <h3>{{replies.author_name}}</h3>
+            <p>{{replies.text}}</p>
+            <img class="comment_image" *ngIf="replies.image != ''" [src]="imageURL+comment.image">
+            <div *ngIf="stickers.hasOwnProperty(replies.text) == true"><img [src]="imageURL+stickers[replies.text]" ></div>
+          </ion-label>
+        </ion-item>	
+      </div>	
+    </ion-list>
+    <ion-row class="media_list" *ngIf="publishPhotos != ''" >
+      <ion-col col-3 class="publisher-photos">		
+        <div class="ImgWrapBig" [style.backgroundImage]="getBackgroundStyle(publishPhotos)">
+          <span class="remove_photo" (click)="removePhoto()"> X </span>
+        </div>
+      </ion-col>
+    </ion-row>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+  <ion-buttons left *ngIf="publishPhotos== ''">
+    <button ion-button icon-only color="primary" (tap)="takeCameraSnap()">
+    <ion-icon name="camera"></ion-icon>
+    </button>
+    <button ion-button icon-only color="primary" (tap)="uploadFromGallery()"> 
+    <ion-icon ios="ios-image" md="md-image"></ion-icon>
+    </button>	  
+    <button ion-button icon-only color="primary" (tap)="showSticker()"> 
+    <ion-icon ios="ios-happy" md="md-happy" ></ion-icon>
+    </button>	  	  
+  </ion-buttons>
+  <ion-item no-lines>
+    <ion-input #comment_box type="text" class="chat_message" placeholder="Write a comment" [(ngModel)]="post_comment.message"  name="message" ></ion-input>
+  </ion-item>
+  <ion-buttons right (tap)="postComment()" >
+    <button ion-button icon-only color="primary" [disabled]="post_comment.message === ''">
+    <ion-icon name="send"></ion-icon>
+    </button>
+  </ion-buttons>
+  </ion-toolbar>
+  <ion-segment [(ngModel)]="stickerEmoji" class="sticker_emoji_tab" *ngIf="sticker_active == 'true'">
+  <ion-segment-button value="emoji">
+    Emoji
+  </ion-segment-button>
+  <ion-segment-button value="sticker">
+    Sticker
+  </ion-segment-button>
+  </ion-segment>
+  <div [ngSwitch]="stickerEmoji" class="stickers_container" [style.height.px]="stickerHeight" >
+  <ion-grid *ngSwitchCase="'emoji'">
+    <ion-row>
+      <ion-col *ngFor="let emoji of allEmoji" col-2 (tap)="sendEmoji(emoji.pattern)">
+        <i class="js_emoji twa twa-2x twa-{{emoji['class']}}"></i>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid *ngSwitchCase="'sticker'">
+    <ion-row>
+    <ion-col *ngFor="let sticker of allSticker" col-3 (tap)="sendStickerMsg(':STK-'+sticker.sticker_id+':')"> 
+      <img [src]="imageURL+sticker.image">
+    </ion-col>
+    </ion-row>	
+  </ion-grid>  
+  </div>
+</ion-footer>

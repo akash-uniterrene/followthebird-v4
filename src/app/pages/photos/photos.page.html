@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-back-button slot="start"></ion-back-button>
+    <ion-title>Photos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button ><ion-icon slot="icon-only" name="search"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-segment color="dark" [(ngModel)]="photoalbum">
+	  <ion-segment-button value="uploads">
+		Uploads
+	  </ion-segment-button>
+	  <ion-segment-button value="albums">
+		Albums
+	  </ion-segment-button>
+	</ion-segment>
+</ion-header>
+
+<ion-content>
+  <div [ngSwitch]="photoalbum">
+    <ion-list *ngSwitchCase="'uploads'" class="ion-no-padding">
+      <ion-grid class="photosGrid">
+          <ion-row>
+              <ion-col *ngFor="let photo of photos" [id]="i" size="4">		
+                <div class="ImgWrapBig" [style.backgroundImage]="getBackgroundStyle(photo.source)" (click)="viewImage(photo)">
+                </div>
+              </ion-col>
+              <ion-infinite-scroll (ionInfinite)="doInfinitePhotos($event)">
+                 <ion-infinite-scroll-content></ion-infinite-scroll-content>
+              </ion-infinite-scroll>
+          </ion-row>
+      </ion-grid>
+    </ion-list>
+    <ion-list *ngSwitchCase="'albums'" class="ion-no-padding">
+      <ion-grid class="photosGrid">
+        <ion-row>
+          <ion-col *ngFor="let album of albums" size="4" >		
+            <div class="ImgWrapBig" [style.backgroundImage]="getBackgroundStyle(album.cover)" (click)="getAlbum(album.album_id)" >                
+            </div>
+            <div class="album-details" (click)="getAlbum(album.album_id)" > 
+              <span style="padding-top:0px;"> {{album.title}} </span>
+            <div>
+              {{album.photos_count}} Photos
+              <div class="">              
+              </div>
+            </div> 
+            </div>
+          </ion-col>
+          <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+             <ion-infinite-scroll-content></ion-infinite-scroll-content>
+          </ion-infinite-scroll>          
+        </ion-row>
+      </ion-grid>
+    </ion-list>
+  </div>
+</ion-content>

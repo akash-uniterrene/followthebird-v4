@@ -7,7 +7,7 @@ import { File } from '@ionic-native/file/ngx';
   providedIn: 'root'
 })
 export class StorageService {
-
+	private imageURL = "https://followthebirds.com/content/uploads/";
   constructor(private transfer: FileTransfer, public platform: Platform, public file: File ) { }
   fileTransfer: FileTransferObject = this.transfer.create();
   createFolder(){
@@ -36,8 +36,8 @@ export class StorageService {
 		}
 	}
   
-	imageDownload(url,folder){
-	  /* let image = []
+	imageDownload(url : any,folder : any) : void {
+	  let image = []
 	  var arr = url.split("/");
 	  var pic_name = arr[arr.length - 1];
 	  const absurl = this.imageURL+url;
@@ -47,6 +47,6 @@ export class StorageService {
 		});  
 	  }, (error) => {
 		console.log(error);
-	  }); */
+	  });
 	}
 }

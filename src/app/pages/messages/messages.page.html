@@ -1,0 +1,102 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-back-button slot="start"></ion-back-button>
+    <ion-searchbar (input)="getItems($event)" ></ion-searchbar>
+    <ion-buttons slot="end">
+        <ion-button slot="icon-only" (click)="createConversation()" ><ion-icon name="add-circle"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-segment [(ngModel)]="messagezone">
+    <ion-segment-button value="messages">
+    MESSAGES 
+    </ion-segment-button>
+    <ion-segment-button value="active">
+    ACTIVE
+    </ion-segment-button>
+    <ion-segment-button value="group">
+    GROUP
+    </ion-segment-button>	  
+  </ion-segment>
+</ion-header>
+
+<ion-content>
+  <div [ngSwitch]="messagezone">
+    <ion-list *ngSwitchCase="'messages'" lines="none" >
+      <ion-item-divider color="light" *ngIf="messages <= 0" center>
+        No Messages
+      </ion-item-divider>
+      <ion-item *ngFor="let message of messages" class="seen" [ngClass]="{'seen': message.seen == '1', 'unseen': message.seen != '1'}"  (press)="deleteConversationAction(message)" >
+        <ion-avatar slot="start" text-wrap (click)="viewMessage(message)">
+          <img [src]="imageURL+message.picture" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'">
+        </ion-avatar>
+        <ion-label>
+          <h2  style="font-weight:inherit"(click)="viewMessage(message)"> {{message.name}}</h2>             
+          <div text-wrap (click)="viewMessage(message)"> 
+          <div *ngIf="stickers[message.message]">
+            <img [src]=	"imageURL+stickers[message.message]" >
+          </div>
+          <div *ngIf="!stickers[message.message]">
+            <p [innerHtml]="message.message"></p>
+          </div>					
+        </div>
+      </ion-label>  
+        <ion-button fill="outline" *ngIf="bulkMessage == 'true'" slot="end" (click)="sentBulkMessage($event,message)">Send</ion-button>
+        <ion-note slot="end" *ngIf="isToday(message.time) && bulkMessage != 'true' ">{{ message.time | date: 'h:mm a' }}</ion-note>
+        <ion-note slot="end" *ngIf="!isToday(message.time) && bulkMessage != 'true' ">{{ message.time | date: 'dd MMM' }}</ion-note>
+      </ion-item>
+      <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </ion-list>
+    <ion-list *ngSwitchCase="'active'" class="ion-no-padding" lines="none">
+      <ion-item-divider color="light">      
+        <ion-label>
+            {{onlineUsers.length}} Active Friends
+        </ion-label>
+      </ion-item-divider>
+      <ion-item *ngFor="let user of onlineUsers" >
+        <ion-avatar slot="start" (click)="messageAction(user)">
+          <img [src]="imageURL+user.user_picture" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'">
+        </ion-avatar>
+        <ion-label>
+          <h2 (click)="messageAction(user)">{{user.user_firstname}} {{user.user_lastname}}</h2>
+          <p> <span class="active_online"></span> online </p>
+        </ion-label>       
+      </ion-item>
+      <ion-item-divider color="light">
+        <ion-label>{{offlineUsers.length}} inactive Friends</ion-label>  
+      </ion-item-divider>
+      <ion-item *ngFor="let user of offlineUsers" >
+        <ion-avatar slot="start" (click)="messageAction(user)">
+          <img [src]="imageURL+user.user_picture" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'">
+        </ion-avatar>
+        <ion-label>
+          <h2 (click)="messageAction(user)">{{user.user_firstname}} {{user.user_lastname}}</h2>
+          <p> <span class="active_offline"></span> offline </p>
+        </ion-label>      
+      </ion-item>
+    </ion-list>
+    <ion-list *ngSwitchCase="'group'" class="ion-no-padding" lines="none">
+      <ion-item-divider color="light" *ngIf="groups <= 0">
+        <ion-label>
+         No Messages
+        </ion-label>
+      </ion-item-divider>
+      <ion-item *ngFor="let message of groups" class="seen" [ngClass]="{'seen': message.seen == '1', 'unseen': message.seen != '1'}" (click)="viewMessageGroup(message,true)" (press)="deleteConversationAction(message)">
+        <ion-avatar slot="start" class="group_avater_wrap">
+          <img class="group_avater" [src]="imageURL+message.picture_left" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'">
+          <img class="group_avater" [src]="imageURL+message.picture_right" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'">
+        </ion-avatar>
+        <ion-label>
+          <h2 style="font-weight:inherit"> {{message.name}}</h2>
+          <p text-wrap >{{message.message}}</p>
+          <ion-note item-end *ngIf="isToday(message.time)">{{ message.time | date: 'h:mm a' }}</ion-note>
+          <ion-note item-end *ngIf="!isToday(message.time)">{{ message.time | date: 'dd MMM' }}</ion-note>
+        </ion-label>    
+      </ion-item>
+      <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+          <ion-infinite-scroll-content></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </ion-list>
+  </div>
+</ion-content>

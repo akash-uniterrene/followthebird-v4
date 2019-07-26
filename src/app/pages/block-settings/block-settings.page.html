@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-back-button slot="start"></ion-back-button>
+    <ion-title>Block settings</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list lines="none">
+    <ion-item *ngFor="let member of users" >
+     <ion-avatar slot="start">
+       <img [src]="imageURL+member.user_picture" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'">
+     </ion-avatar>
+     <ion-label>
+      <h2>{{member.user_firstname}} {{member.user_lastname}}</h2>
+     </ion-label>     
+     <ion-button slot="end" size="default" fill="clear" padding-left padding-right (click)="unblockAction($event,member)">
+         Unblock
+     </ion-button>
+   </ion-item>
+  </ion-list >
+</ion-content>

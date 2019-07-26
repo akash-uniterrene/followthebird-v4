@@ -1,9 +1,39 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>
-      Tab Two
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+    <ion-list *ngIf="pendindFriendLists.length > 0" class="ion-no-padding ion-text-center">
+        <ion-item *ngFor="let friend of pendindFriendLists" >	
+            <ion-thumbnail slot="start">
+                <img [src]="imageURL+friend.user_picture" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'" (click)="viewProfile(friend.user_name)">
+            </ion-thumbnail>
+            <ion-label>
+                <h2 (click)="viewProfile(friend.user_name,friend.user_id)">{{friend.user_firstname}} {{friend.user_lastname}}</h2>
+                <div *ngIf="this.response == 'false'" >
+                    <ion-button (click)="confrimRequest($event,friend.user_id)" >Confirm</ion-button>
+                    <ion-button ion-button fill="outline" margin-left (click)="deleteRequest($event,friend.user_id)">Delete</ion-button>
+                </div>
+            </ion-label>
+        </ion-item>
+    </ion-list>
 
-<ion-content></ion-content>
+    <ion-list *ngIf="usermayknow.length > 0" class="ion-no-padding ion-text-center">
+        <ion-item-divider color="light" >
+         <ion-label class="ion-text-center">
+          <strong>People you may know</strong>
+        </ion-label>    
+        </ion-item-divider> 
+        <ion-item *ngFor="let friend of usermayknow">
+            <ion-thumbnail slot="start" (click)="viewProfile(friend.user_name,friend.user_id)">
+                <img [src]="imageURL+friend.user_picture" onError="this.src='assets/followthebirdImgs/no-profile-img.jpeg'">				
+            </ion-thumbnail>			
+            <ion-label>
+                <h2 (click)="viewProfile(friend.user_name,friend.user_id)"> {{friend.user_firstname}} {{friend.user_lastname}}</h2>
+                <p>	{{friend.mutual_friends_count}} Mutual Friends <p>	
+                <ion-button  size="default" (click)="addAction($event,friend)" expand="fill">
+                     Add Friend
+                </ion-button>
+                <ion-button  size="default" color="primary" fill="outline" (click)="removeAction($event,friend.user_id)">
+                  Remove
+                </ion-button>    	
+            </ion-label>               
+        </ion-item>
+    </ion-list> 
+</ion-content>

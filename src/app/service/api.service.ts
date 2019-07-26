@@ -9,7 +9,7 @@ import { forkJoin } from 'rxjs';
 export class ApiService {
   url: string = 'https://followthebirds.com/api/v1';
   constructor(public http: HttpClient) { }
-  get(endpoint: string, params?: any, reqOpts?: any) {
+  get(endpoint: string, params?: any, reqOpts?: any): Observable<any> {
 	  
     if (!reqOpts) {
       reqOpts = {
@@ -27,19 +27,19 @@ export class ApiService {
     return this.http.get(this.url + '/' + endpoint, reqOpts);
   }
 
-  post(endpoint: string, body: any, reqOpts?: any) {
+  post(endpoint: string, body: any, reqOpts?: any): Observable<any> {
     return this.http.post(this.url + '/' + endpoint, body, reqOpts);
   }
 
-  put(endpoint: string, body: any, reqOpts?: any) {
+  put(endpoint: string, body: any, reqOpts?: any): Observable<any> {
     return this.http.put(this.url + '/' + endpoint, body, reqOpts);
   }
 
-  delete(endpoint: string, reqOpts?: any) {
+  delete(endpoint: string, reqOpts?: any) : Observable<any>{
     return this.http.delete(this.url + '/' + endpoint, reqOpts);
   }
 
-  patch(endpoint: string, body: any, reqOpts?: any) {
+  patch(endpoint: string, body: any, reqOpts?: any) : Observable<any>{
     return this.http.patch(this.url + '/' + endpoint, body, reqOpts);
   }
 }

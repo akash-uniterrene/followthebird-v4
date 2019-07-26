@@ -1,0 +1,61 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-back-button slot="start"></ion-back-button>
+    <ion-title>Groups</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="createGroup()">
+        <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>   
+  </ion-toolbar>
+  <ion-segment [(ngModel)]="groupzone">
+    <ion-segment-button value="discover">
+    Discover 
+    </ion-segment-button>
+    <ion-segment-button value="joined">
+    Joined
+    </ion-segment-button>
+    <ion-segment-button value="manage">
+    My groups
+    </ion-segment-button>	  
+  </ion-segment>
+</ion-header>
+<ion-content>
+  <div [ngSwitch]="groupzone">
+      <ion-grid *ngSwitchCase="'discover'">
+        <ion-row >
+        <ion-col class="group_wrap" col-4 *ngFor="let group of groupLists.suggested" >
+          <div class="image-circle" >
+            <img [src]="imageURL+group.group_picture" onError="this.src='assets/followthebirdImgs/blank_group.jpg'" (click)="viewGroup(group)" /> 
+          </div>
+          <div style="text-align: center;" (click)="viewGroup(group)"> {{group.group_title}}</div>
+          <!--<ion-button slot="end" fill="outline" (tap)="joinGroupAction($event,'group-join',group.group_id)"> Join </ion-button>>
+        --></ion-col>
+        </ion-row>
+      </ion-grid>
+      <ion-list *ngSwitchCase="'joined'">
+        <ion-item *ngFor="let group of groupLists.joined" >
+          <ion-thumbnail slot="start" class="image-circle" (click)="viewGroup(group)">
+            <img [src]="imageURL+group.group_picture" onError="this.src='assets/followthebirdImgs/blank_group.jpg'" (click)="viewEvent(event)" /> 
+          </ion-thumbnail>
+          <ion-label>
+            <h2 (click)="viewGroup(group)">{{group.group_title}}</h2>
+            <p>{{group.group_members}} Members</p>
+          </ion-label>          
+          <ion-button slot="end"  fill="outline" (tap)="leavegroupAction($event,'group-leave',group.group_id)"> Leave </ion-button>
+        </ion-item>
+      </ion-list>
+      <ion-list *ngSwitchCase="'manage'">
+        <ion-item *ngFor="let group of groupLists.manage" >
+          <ion-thumbnail slot="start" class="image-circle" (click)="viewGroup(group)">
+            <img [src]="imageURL+group.group_picture" onError="this.src='assets/followthebirdImgs/blank_group.jpg'" (click)="viewEvent(event)" /> 
+          </ion-thumbnail>
+          <ion-label>
+            <h2 (click)="viewGroup(group)">{{group.group_title}}</h2>
+            <p>{{group.group_members}} Members</p>
+          </ion-label>        
+          <ion-button slot="end" fill="clear"><ion-icon slot="icon-only" name='more'></ion-icon></ion-button>
+        </ion-item>
+      </ion-list>       
+  </div>
+</ion-content>
