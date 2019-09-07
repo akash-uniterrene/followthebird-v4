@@ -163,220 +163,219 @@ export class PostPage {
 		}			
 	} 
 
-downloadAttachment(filePath){
-	let arr = filePath.split('/');
-	var filename = arr.pop();
-	let url = encodeURI(filePath);  
-	const fileTransfer: FileTransferObject = this.transfer.create();
-	fileTransfer.download(this.mediapath+filePath, this.file.dataDirectory + filename).then((entry) => {
-	let toast = this.toastCtrl.create({
-		message: "Attachment bas been download",
-		duration: 3000,
-		position: 'top'
+	downloadAttachment(filePath){
+		let arr = filePath.split('/');
+		var filename = arr.pop();
+		let url = encodeURI(filePath);  
+		const fileTransfer: FileTransferObject = this.transfer.create();
+		fileTransfer.download(this.mediapath+filePath, this.file.dataDirectory + filename).then((entry) => {
+		let toast = this.toastCtrl.create({
+			message: "Attachment bas been download",
+			duration: 3000,
+			position: 'top'
+		});
+		}, (error) => {
+		// handle error
+		let toast = this.toastCtrl.create({
+			message: "Downloading failure! retry.",
+			duration: 3000,
+			position: 'top'
+		});
 	});
-	}, (error) => {
-	// handle error
-	 let toast = this.toastCtrl.create({
-		message: "Downloading failure! retry.",
-		duration: 3000,
-		position: 'top'
-	});
- });
-}
+	}
 
-async viewComments(index,comments,post_id){
-	console.log("hi");
-	const modal = await this.modalCtrl.create({
-		component: CommentsPage,
-		componentProps: {
-			'comments': JSON.stringify(comments),
-			'post_id': post_id,
-			'handle': 'post'
-		  }
-	});
-	await modal.present();
-}
+	async viewComments(index,comments,post_id){
+		const modal = await this.modalCtrl.create({
+			component: CommentsPage,
+			componentProps: {
+				'comments': comments,
+				'post_id': post_id,
+				'handle': 'post'
+				}
+		});
+		await modal.present();
+	}
 
 async sharePostCtrl(post_id)
 {
-let prompt = await this.alertCtrl.create({
-	message: 'Share this post',	
-	inputs : [
-	{
-		type:'radio',
-		label:'Share post now ',
-		value:post_id
-	},
-	{
-		type:'radio',
-		label:'Write Post',
-		value:post_id
-	}],
-	buttons : [
-	{
-		text: "Cancel",
-		handler: data => {
-		console.log("cancel clicked");
-		}
-	},
-	{
-		text: "Share",
-		handler: data => {
-			this.sharePost('share',post_id);
-		}
+	let prompt = await this.alertCtrl.create({
+		message: 'Share this post',	
+		inputs : [
+		{
+			type:'radio',
+			label:'Share post now ',
+			value:post_id
+		},
+		{
+			type:'radio',
+			label:'Write Post',
+			value:post_id
+		}],
+		buttons : [
+		{
+			text: "Cancel",
+			handler: data => {
+			console.log("cancel clicked");
+			}
+		},
+		{
+			text: "Share",
+			handler: data => {
+				this.sharePost('share',post_id);
+			}
 	}]});
 	await prompt.present();
 }
 
 	async postActivity(event,post)
-{
-	let  buttons : any = [
-		{
-			icon: !this.platform.is('ios') ? 'ios-bookmark' : null,	
-			text: 'Save Post',
-			handler: () => {
-			this.reactAction('save_post',post.post_id);
+	{
+		let  buttons : any = [
+			{
+				icon: !this.platform.is('ios') ? 'ios-bookmark' : null,	
+				text: 'Save Post',
+				handler: () => {
+				this.reactAction('save_post',post.post_id);
+				}
 			}
+		];	
+		if(post.author_id != localStorage.getItem('user_id')){
+			let report : any = {
+				icon: !this.platform.is('ios') ? 'ios-flag' : null,		
+				text: 'Report Post',
+				handler: () => {
+					this.reportAction("post",post.post_id)
+				}
+			};
+			
+			let hide : any = {
+				icon: !this.platform.is('ios') ? 'ios-eye-off' : null,		
+				text: 'Hide Post',
+				handler: () => {
+				event.target.parentNode.parentNode.parentNode.parentNode.remove();
+				this.reactAction("hide_post",post.post_id)
+				}
+			};	
+			buttons.push(report);
+			buttons.push(hide);
 		}
-	];	
-	if(post.author_id != localStorage.getItem('user_id')){
-		let report : any = {
-			icon: !this.platform.is('ios') ? 'ios-flag' : null,		
-			text: 'Report Post',
-			handler: () => {
-				this.reportAction("post",post.post_id)
-			}
-		};
-		
-		let hide : any = {
-			icon: !this.platform.is('ios') ? 'ios-eye-off' : null,		
-			text: 'Hide Post',
-			handler: () => {
-			event.target.parentNode.parentNode.parentNode.parentNode.remove();
-			this.reactAction("hide_post",post.post_id)
-			}
-		};	
-		buttons.push(report);
-		buttons.push(hide);
-	}
-	if(post.author_id == localStorage.getItem('user_id')){
-		let btn : any = {
-			icon: !this.platform.is('ios') ? 'ios-trash' : null,		
-			text: 'Delete Post',
-			handler: async () => {
-			const confirm = await this.alertCtrl.create({
-				header: 'Delete post?',
-				message: 'Once you delete you can not undo this step.',
-				buttons: [
-				{
-					text: 'Cancel',
-					handler: () => {
-					
+		if(post.author_id == localStorage.getItem('user_id')){
+			let btn : any = {
+				icon: !this.platform.is('ios') ? 'ios-trash' : null,		
+				text: 'Delete Post',
+				handler: async () => {
+				const confirm = await this.alertCtrl.create({
+					header: 'Delete post?',
+					message: 'Once you delete you can not undo this step.',
+					buttons: [
+					{
+						text: 'Cancel',
+						handler: () => {
+						
+						}
 					}
-				}
-				,{
-					text: 'Delete',
-					handler: () => {
-					event.target.parentNode.parentNode.parentNode.parentNode.remove();
-					this.reactAction("delete_post",post.post_id)
+					,{
+						text: 'Delete',
+						handler: () => {
+						event.target.parentNode.parentNode.parentNode.parentNode.remove();
+						this.reactAction("delete_post",post.post_id)
+						}
 					}
+					]
+				});
+				await confirm.present();  
 				}
-				]
-			});
-			await confirm.present();  
-			}
-		};
-		buttons.push(btn);
-	}
-	const actionSheet = await this.actionSheetCtrl.create({
-		buttons
-	});
-	await actionSheet.present();
-}
-
-getBackgroundStyle(url) {
-	if(!url){
-		return 'url(assets/followthebirdImgs/no-profile-img.jpeg)'
-	} else {
-		return 'url(' + this.mediapath+url + ')'
-	}
-}
-
-getStoryBackgroundStyle(media) {
-	
-	if(media != 'null'){
-		console.log(media);
-		let obj = JSON.parse(media)
-		return 'url(' + this.mediapath+obj[0].src + ')'
-	} else {
-		return 'url(assets/followthebirdImgs/story_background.png)'
-	}
-	
-}
-
-getMedia(media) {
-	let obj = JSON.parse(media)
-	return this.mediapath+obj[0].src;
-}
-
-sharePost(type,id){
-	this.post.sharePost({'do':type,id:id,my_id:localStorage.getItem('user_id')}).subscribe(async (resp) => {
-		const toast = await this.toastCtrl.create({
-		message: "Post has been shared successfully",
-		duration: 3000,
-		position: 'top'
-	});
-	toast.present();	
-}, async (err) => {
-	const toast = await this.toastCtrl.create({
-		message: "Unable to post. Retry",
-		duration: 3000,
-		position: 'top',
-	});
-	toast.present();
-  });
-}
-
-reactAction(type,post_id){
-	let params :any = {
-		'do': type,
-		'id': post_id,
-		'my_id' : localStorage.getItem('user_id')
-	};
-	this.post.reaction(params).subscribe((resp) => {						
-	
-	}, (err) => {
-
- 	});
-}
-
-
-reportAction(handle,id){
-	let params :any = {
-		'handle': handle,
-		'id': id,
-		'my_id' : localStorage.getItem('user_id')
-	};
-	this.user.report(params).subscribe(async (resp) => {						
-		const toast = await this.toastCtrl.create({
-		message: "Report has been submitted successfully",
-		duration: 3000,
-		position: 'top'
+			};
+			buttons.push(btn);
+		}
+		const actionSheet = await this.actionSheetCtrl.create({
+			buttons
 		});
-		toast.present();
+		await actionSheet.present();
+	}
+
+	getBackgroundStyle(url) {
+		if(!url){
+			return 'url(assets/followthebirdImgs/no-profile-img.jpeg)'
+		} else {
+			return 'url(' + this.mediapath+url + ')'
+		}
+	}
+
+	getStoryBackgroundStyle(media) {
+		
+		if(media != 'null'){
+			console.log(media);
+			let obj = JSON.parse(media)
+			return 'url(' + this.mediapath+obj[0].src + ')'
+		} else {
+			return 'url(assets/followthebirdImgs/story_background.png)'
+		}
+		
+	}
+
+	getMedia(media) {
+		let obj = JSON.parse(media)
+		return this.mediapath+obj[0].src;
+	}
+
+	sharePost(type,id){
+		this.post.sharePost({'do':type,id:id,my_id:localStorage.getItem('user_id')}).subscribe(async (resp) => {
+			const toast = await this.toastCtrl.create({
+			message: "Post has been shared successfully",
+			duration: 3000,
+			position: 'top'
+		});
+		toast.present();	
 	}, async (err) => {
 		const toast = await this.toastCtrl.create({
-		message: "Failed to Submit Report. Please Try Again",
-		duration: 3000,
-		position: 'top',
+			message: "Unable to post. Retry",
+			duration: 3000,
+			position: 'top',
 		});
 		toast.present();
-	});
-}
+		});
+	}
 
-AddStory(){
-	this.router.navigate(['/AddStoryPage']);
-}
+	reactAction(type,post_id){
+		let params :any = {
+			'do': type,
+			'id': post_id,
+			'my_id' : localStorage.getItem('user_id')
+		};
+		this.post.reaction(params).subscribe((resp) => {						
+		
+		}, (err) => {
+
+		});
+	}
+
+
+	reportAction(handle,id){
+		let params :any = {
+			'handle': handle,
+			'id': id,
+			'my_id' : localStorage.getItem('user_id')
+		};
+		this.user.report(params).subscribe(async (resp) => {						
+			const toast = await this.toastCtrl.create({
+			message: "Report has been submitted successfully",
+			duration: 3000,
+			position: 'top'
+			});
+			toast.present();
+		}, async (err) => {
+			const toast = await this.toastCtrl.create({
+			message: "Failed to Submit Report. Please Try Again",
+			duration: 3000,
+			position: 'top',
+			});
+			toast.present();
+		});
+	}
+
+	AddStory(){
+		this.router.navigate(['/AddStoryPage']);
+	}
 
 	getLiveLitePost(){
 		let items :any = {

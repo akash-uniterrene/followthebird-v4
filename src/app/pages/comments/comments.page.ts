@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { LoadingController, ToastController, ModalController } from '@ionic/angular';
+import { LoadingController, ToastController, ModalController, NavParams } from '@ionic/angular';
 import { Router,ActivatedRoute } from '@angular/router';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -42,11 +42,13 @@ export class CommentsPage implements OnInit {
     public toastCtrl: ToastController, 
     public post: PostService,
     public router: Router,
+    public nav : NavParams,
     private activatedRoute: ActivatedRoute
   ) {
-    this.comments = JSON.parse(this.activatedRoute.snapshot.paramMap.get('comments')) || [];
-    this.post_comment.id = this.activatedRoute.snapshot.paramMap.get('post_id');
-    this.post_comment.handle = this.activatedRoute.snapshot.paramMap.get('handle');
+    this.comments = this.nav.get('comments') || [];
+    console.log(this.comments);
+    this.post_comment.id = this.nav.get('post_id');
+    this.post_comment.handle = this.nav.get('handle');
     if(this.post_comment.handle == 'comment'){
       this.title = "Replies";
     }
@@ -83,7 +85,9 @@ export class CommentsPage implements OnInit {
   }
 
   dismiss() {
-    //this.viewCtrl.dismiss(this.comments.length);
+    this.modalCtrl.dismiss({
+      'dismissed': true
+    });
   }
 
   takeCameraSnap(){
@@ -215,13 +219,16 @@ export class CommentsPage implements OnInit {
     
     
   postComment(){
+    console.log(this.post_comment);
     this.post.postComment(this.post_comment).subscribe((resp) => {	
-      this.comments.push(resp);
+      this.comments[resp];
       this.post_comment.message = '';
       this.post_comment.photo = '';
       this.publishPhotos = '';
     }, (err) => {        
     });
   }
+
+  
 
 }
